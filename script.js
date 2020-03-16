@@ -74,7 +74,30 @@ let display_array = [];
 
 let sum_array = [];
 
+function operate(num1, num2, op) {
+	if (op === "+") {
+		return num1 + num2;
+	} else if (op === "-") {
+		return num1 - num2;
+	} else if (op === "/") {
+		return num1/num2;
+	} else if (op === "*") {
+		return num1 * num2;
+	} else {
+		return 0;
+	}
+}
+
 
 function evaluate() {
-	
+	for (let i = 0; i < operators.length; i++) {
+		
+	}
 }
+
+/* 
+To Do:
+
+
+
+*/
