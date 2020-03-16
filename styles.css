@@ -23,9 +23,35 @@
   	margin: 10px;
 }
 
+.button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: black 2px solid;
+	border-radius: 2px;
+}
+
 .number_button {
 	background-color:  #e38a84;
-	border: black 2px solid;
+}
+
+#operator_button_section {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-auto-rows: 25px;
+	grid-gap: 10px;
+	margin: 10px;
+}
+
+.operator_button {
+	background-color:  #a39e91;
+}
+
+.evaluate_button {
+	height: 60px;
+	width: 30px;
+	float: right;
+	margin: 10px	;
 }
 
 .basic_operator_button {
