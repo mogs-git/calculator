@@ -91,13 +91,16 @@ function operate(num1, num2, op) {
 
 function evaluate() {
 	for (let i = 0; i < operators.length; i++) {
-		
+
 	}
 }
 
 /* 
 To Do:
-
-
+	
+	- Add clear and delete button
+	- Add style changes on click/hover/mousedown for buttons
+	- Make "evaluate" logic by using indexof operators in sum_array then passing these and numbers either side of index to operate(),
+	then slicing the array with the returned value. 
 
 */
