@@ -1,0 +1,33 @@
+#calculator_body {
+	border: solid black 3px;
+	border-radius: 20px;
+	height: 600px;
+	width: 400px;
+}
+
+#display_section {
+	display: grid;
+	grid-template-rows: repeat(2, 1fr);
+	grid-gap: 10px;
+	height: 200px;
+	background-color: #f5d3a6;
+	border-radius: 10px;
+	margin: 10px;
+}
+
+#number_button_section {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+  	grid-gap: 10px;
+  	grid-auto-rows: 50px;
+  	margin: 10px;
+}
+
+.number_button {
+	background-color:  #e38a84;
+	border: black 2px solid;
+}
+
+.basic_operator_button {
+
+}
