@@ -131,37 +131,37 @@ function evaluate(my_array) {
 	}
 	// Assumes no brackets left in my_array.
 
-	let mult_div = [];
-	let add_sub = [];
-	for (let i = 0; i< my_array.length; i++) {
-		if (["/", "*"].includes(my_array[i])) {
-			mult_div.push(i);
-		} else if (["+", "-"].includes(my_array[i])) {
-			add_sub.push(i);
-		}
+	function isIn (arr, haystack) {
+	    return arr.some(function (v) {
+	        return haystack.indexOf(v) >= 0;
+	    });
+	};
+
+	while (isIn(["/", "*"], my_array)) {
+		indexes = [my_array.indexOf("/"),my_array.indexOf("*")];
+		console.log(indexes);
+		indexes = indexes.filter((e) => {
+			return e > 0;
+		})
+		i = Math.min(...indexes) // get leftmost
+		console.log(i);
+		let start_section = my_array.slice(0,i-1);
+		let end_section = my_array.slice(i+2);
+		my_array = start_section.concat(operate(my_array[i-1], my_array[i+1], my_array[i])).concat(end_section);
+		console.log(my_array);
 	}
-	let all_operators = mult_div.concat(add_sub);
-	console.log("All: "+ all_operators);
-	for (let i = 0; i < all_operators.length; i++) {
-		let position = all_operators[i];
-		let start_section = my_array.slice(0,position-1);
-		console.log("Start section: " + start_section);
-		let end_section = my_array.slice(position+2);
-		console.log("End section: " + end_section);
-		console.log(operate(my_array[position-1], my_array[position+1], my_array[position]));
-		my_array = start_section.concat(operate(my_array[position-1], my_array[position+1], my_array[position])).concat(end_section)
+	while(isIn(["+", "-"], my_array)) {
+		indexes = [my_array.indexOf("+"),my_array.indexOf("-")];
+		console.log(indexes);
+		indexes = indexes.filter((e) => {
+			return e > 0;
+		})
+		i = Math.min(...indexes) // get leftmost
+		let start_section = my_array.slice(0,i-1);
+		let end_section = my_array.slice(i+2);
+		my_array = start_section.concat(operate(my_array[i-1], my_array[i+1], my_array[i])).concat(end_section);
 	}
 
-	while(my_array.some(r=> ["/", "*"].includes(r))) {
-		for (let i = 0; i < my_array.length; i++) {
-			if (["/", "*"].includes(my_array[i])) {
-				let start_section = my_array.slice(0,i-1);
-				let end_section = my_array.slice(i+2);
-				my_array = start_section.concat(operate(my_array[i-1], my_array[i+1], my_array[i])).concat(end_section);
-				break;
-			}
-		}
-	}
 
 	return my_array;
 }
