@@ -88,8 +88,7 @@ function operate(num1, num2, op) {
 	}
 }
 
-function collapse_brackets(my_array) {
-	function getAllIndexes(arr, val) {
+function getAllIndexes(arr, val) {
 	    var indexes = [], i;
 	    for(i = 0; i < arr.length; i++)
 	        if (arr[i] === val)
@@ -97,36 +96,77 @@ function collapse_brackets(my_array) {
 	    return indexes;
 	}
 
-	//open_brackets = getAllIndexes(my_array, "(");
-	close_bracket_indexes = reverse(getAllIndexes(my_array, ")"));
+function collapse_brackets(my_array) {
 
-	for (let i = 0; i < close_bracket_indexes.length; i++) {
-		let j = close_indexes[i];
-		while (my_array[j] != "(") {
-			j--
-		}
-		//pair_array.push([close_indexes[i], j])
-		let start_section = my_array.slice(0, j-1);
-		let end_section = my_array.slice(close_bracket_indexes[i]);
-		my_array = start_section.concat(evaluate(my_array.slice(j+1,close_bracket_indexes[i]-1))).concat(end_section); // +1 and -1 are important- the outer brackets are simply sliced out in this way
-		// before the section is passed to evaluate. If there are brackets nested within brackets, evaluate() will detect them and recusively pass
-		// the array back to collapse_brackets() until no more brackets are detected, breaking the recursion.
+	close_bracket_indexes = getAllIndexes(my_array, ")");
+
+	let j = close_bracket_indexes[0];
+	while (my_array[j] != "(") {
+		j--
 	}
+	// j becomes the position of the corresponding open bracket.
+
+	let start_section = my_array.slice(0, j);
+	// console.log(start_section)
+	let end_section = my_array.slice(close_bracket_indexes[0]+1);
+	// console.log(end_section)
+	// console.log(my_array.slice(j+1,close_bracket_indexes[i]));
+	// console.log("eval: "+ evaluate(my_array.slice(j+1,close_bracket_indexes[i])))
+	//console.log(my_array.slice(j+1,close_bracket_indexes[i]));
+	my_array = evaluate(start_section.concat(evaluate(my_array.slice(j+1,close_bracket_indexes[0]))).concat(end_section)); // +1 and -1 are important- the outer brackets are simply sliced out in this way
+	// before the section is passed to evaluate. If there are brackets nested within brackets, evaluate() will detect them and recusively pass
+	// the array back to collapse_brackets() until no more brackets are detected, breaking the recursion.
 	
 	return my_array;
 }
 
-my_array = [1, "+", 2, "+", "(", 1, "-", 2, "+", "(", 2, "/", 2, "*", "(", 1, "-", 2, ")", "+", "(", 1, "-", 2, ")", ")", "/", 2, ")"];
+test_array = [1, "+", 2, "+", "(", 1, "-", 2, "+", "(", 2, "/", 2, "*", "(", 1, "-", 2, ")", "+", "(", 1, "-", 2, ")", ")", "/", 2, ")"];
+test = 2/2*-1-1
 
 function evaluate(my_array) {
 	if (my_array.indexOf(")") != -1) {
-		collapse_brackets(my_array, getAllIndexes(my_array, ")"))
+		console.log("here");
+		console.log(my_array);
+		my_array = collapse_brackets(my_array);
 	}
 	// Assumes no brackets left in my_array.
-	for (let i = 0; i < operators.length; i++) {
 
+	let mult_div = [];
+	let add_sub = [];
+	for (let i = 0; i< my_array.length; i++) {
+		if (["/", "*"].includes(my_array[i])) {
+			mult_div.push(i);
+		} else if (["+", "-"].includes(my_array[i])) {
+			add_sub.push(i);
+		}
 	}
+	let all_operators = mult_div.concat(add_sub);
+	console.log("All: "+ all_operators);
+	for (let i = 0; i < all_operators.length; i++) {
+		let position = all_operators[i];
+		let start_section = my_array.slice(0,position-1);
+		console.log("Start section: " + start_section);
+		let end_section = my_array.slice(position+2);
+		console.log("End section: " + end_section);
+		console.log(operate(my_array[position-1], my_array[position+1], my_array[position]));
+		my_array = start_section.concat(operate(my_array[position-1], my_array[position+1], my_array[position])).concat(end_section)
+	}
+
+	while(my_array.some(r=> ["/", "*"].includes(r))) {
+		for (let i = 0; i < my_array.length; i++) {
+			if (["/", "*"].includes(my_array[i])) {
+				let start_section = my_array.slice(0,i-1);
+				let end_section = my_array.slice(i+2);
+				my_array = start_section.concat(operate(my_array[i-1], my_array[i+1], my_array[i])).concat(end_section);
+				break;
+			}
+		}
+	}
+
+	return my_array;
 }
+
+
 
 /* 
 To Do:
