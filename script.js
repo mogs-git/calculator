@@ -88,8 +88,41 @@ function operate(num1, num2, op) {
 	}
 }
 
+function collapse_brackets(my_array) {
+	function getAllIndexes(arr, val) {
+	    var indexes = [], i;
+	    for(i = 0; i < arr.length; i++)
+	        if (arr[i] === val)
+	            indexes.push(i);
+	    return indexes;
+	}
 
-function evaluate() {
+	//open_brackets = getAllIndexes(my_array, "(");
+	close_bracket_indexes = reverse(getAllIndexes(my_array, ")"));
+
+	for (let i = 0; i < close_bracket_indexes.length; i++) {
+		let j = close_indexes[i];
+		while (my_array[j] != "(") {
+			j--
+		}
+		//pair_array.push([close_indexes[i], j])
+		let start_section = my_array.slice(0, j-1);
+		let end_section = my_array.slice(close_bracket_indexes[i]);
+		my_array = start_section.concat(evaluate(my_array.slice(j+1,close_bracket_indexes[i]-1))).concat(end_section); // +1 and -1 are important- the outer brackets are simply sliced out in this way
+		// before the section is passed to evaluate. If there are brackets nested within brackets, evaluate() will detect them and recusively pass
+		// the array back to collapse_brackets() until no more brackets are detected, breaking the recursion.
+	}
+	
+	return my_array;
+}
+
+my_array = [1, "+", 2, "+", "(", 1, "-", 2, "+", "(", 2, "/", 2, "*", "(", 1, "-", 2, ")", "+", "(", 1, "-", 2, ")", ")", "/", 2, ")"];
+
+function evaluate(my_array) {
+	if (my_array.indexOf(")") != -1) {
+		collapse_brackets(my_array, getAllIndexes(my_array, ")"))
+	}
+	// Assumes no brackets left in my_array.
 	for (let i = 0; i < operators.length; i++) {
 
 	}
@@ -102,5 +135,6 @@ To Do:
 	- Add style changes on click/hover/mousedown for buttons
 	- Make "evaluate" logic by using indexof operators in sum_array then passing these and numbers either side of index to operate(),
 	then slicing the array with the returned value. 
+	- Add calculator-y styles e.g. change the font style.
 
 */
