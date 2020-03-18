@@ -1,5 +1,10 @@
 const display = document.getElementById("display_section");
-
+const display_sum = document.createElement("div");
+const display_eval = document.createElement("div");
+display_sum.classList.add("display_child");
+display_eval.classList.add("display_child");
+display.appendChild(display_sum);
+display.appendChild(display_eval);
 
 // Creating Numbers
 // ---------------------------------------------------------------------------------------------
@@ -22,7 +27,8 @@ for (let i = 0; i < numbers.length; i++) {
 	number_buttons.appendChild(button);
 }
 
-
+// Creating operators
+//-------------------------------------------------------------------------------
 const operator_buttons = document.getElementById("operator_button_section");
 
 let operators = ["/", "*", "+", "-"];
@@ -35,13 +41,25 @@ for (let i = 0; i < operators.length; i++) {
 	operator_buttons.appendChild(button);
 }
 
+const spec_operator_buttons = document.getElementById("spec_operator_button_section");
+
+let spec_operators = ["(", ")", "del", "clr"];
+
+// create buttons
+for (let i = 0; i < spec_operators.length; i++) {
+	let button = document.createElement("div");
+	button.classList.add("operator_button","button");
+	button.textContent = spec_operators[i];
+	spec_operator_buttons.appendChild(button);
+}
+
 
 // Create evaluate button
 let evaluate_button = document.createElement("div");
 evaluate_button.classList.add("evaluate_button","operator_button","button");
 evaluate_button.textContent = "=";
-const button_sections = document.getElementById("button_sections");
-button_sections.appendChild(evaluate_button);
+const calc_body = document.getElementById("calculator_body");
+calc_body.appendChild(evaluate_button);
 
 
 // Doing operations 
@@ -53,19 +71,35 @@ for (let i = 0; i < all_buttons.length; i++) {
 	all_buttons[i].addEventListener("click", (e) => {
 		
 		// Add content to sum array for the evaluate function
-		if (e.target.textContent.includes(operators.concat(["="]))) {
-			sum_array.push(e.target.textContent);
+		if (isIn([e.target.textContent], operators.concat(spec_operators).concat(["="]))) {
+			if (e.target.textContent === "del") {
+				sum_array.pop();
+			} else if (e.target.textContent === "clr") {
+				sum_array = [];
+			} else if (e.target.textContent != "=") {
+				sum_array.push(e.target.textContent);
+			} else {
+				display_eval.textContent = evaluate(sum_array)[0];
+			}
 		} else {
 			sum_array.push(Number(e.target.textContent));
 		}
 
-		// Add content to display
-		display_array.push(e.target.textContent);
 		let display_text = "";
+		// Add content to display
+		if (e.target.textContent === "del") {
+			display_array.pop();
+		} else if (e.target.textContent === "clr") {
+			display_array = [];
+		} else if (e.target.textContent === "=") {
+			//
+		} else {
+			display_array.push(e.target.textContent);
+		}
 		display_array.forEach((symbol) => {
 			display_text = display_text + " " + symbol;
 		})
-		display.textContent = display_text;
+		display_sum.textContent = display_text;
 	})
 }
 
@@ -89,12 +123,18 @@ function operate(num1, num2, op) {
 }
 
 function getAllIndexes(arr, val) {
-	    var indexes = [], i;
-	    for(i = 0; i < arr.length; i++)
-	        if (arr[i] === val)
-	            indexes.push(i);
-	    return indexes;
-	}
+    var indexes = [], i;
+    for(i = 0; i < arr.length; i++)
+        if (arr[i] === val)
+            indexes.push(i);
+    return indexes;
+}
+
+function isIn (arr, haystack) {
+    return arr.some(function (v) {
+        return haystack.indexOf(v) >= 0;
+    });
+};
 
 function collapse_brackets(my_array) {
 
@@ -106,14 +146,10 @@ function collapse_brackets(my_array) {
 	}
 	// j becomes the position of the corresponding open bracket.
 
-	let start_section = my_array.slice(0, j);
-	// console.log(start_section)
-	let end_section = my_array.slice(close_bracket_indexes[0]+1);
-	// console.log(end_section)
-	// console.log(my_array.slice(j+1,close_bracket_indexes[i]));
-	// console.log("eval: "+ evaluate(my_array.slice(j+1,close_bracket_indexes[i])))
-	//console.log(my_array.slice(j+1,close_bracket_indexes[i]));
-	my_array = evaluate(start_section.concat(evaluate(my_array.slice(j+1,close_bracket_indexes[0]))).concat(end_section)); // +1 and -1 are important- the outer brackets are simply sliced out in this way
+	let before_bracket = my_array.slice(0, j);
+	let after_bracket = my_array.slice(close_bracket_indexes[0]+1);
+
+	my_array = evaluate(before_bracket.concat(evaluate(my_array.slice(j+1,close_bracket_indexes[0]))).concat(after_bracket)); // +1 and -1 are important- the outer brackets are simply sliced out in this way
 	// before the section is passed to evaluate. If there are brackets nested within brackets, evaluate() will detect them and recusively pass
 	// the array back to collapse_brackets() until no more brackets are detected, breaking the recursion.
 	
@@ -125,34 +161,22 @@ test = 2/2*-1-1
 
 function evaluate(my_array) {
 	if (my_array.indexOf(")") != -1) {
-		console.log("here");
-		console.log(my_array);
 		my_array = collapse_brackets(my_array);
 	}
+
 	// Assumes no brackets left in my_array.
-
-	function isIn (arr, haystack) {
-	    return arr.some(function (v) {
-	        return haystack.indexOf(v) >= 0;
-	    });
-	};
-
 	while (isIn(["/", "*"], my_array)) {
 		indexes = [my_array.indexOf("/"),my_array.indexOf("*")];
-		console.log(indexes);
 		indexes = indexes.filter((e) => {
 			return e > 0;
 		})
 		i = Math.min(...indexes) // get leftmost
-		console.log(i);
 		let start_section = my_array.slice(0,i-1);
 		let end_section = my_array.slice(i+2);
 		my_array = start_section.concat(operate(my_array[i-1], my_array[i+1], my_array[i])).concat(end_section);
-		console.log(my_array);
 	}
 	while(isIn(["+", "-"], my_array)) {
 		indexes = [my_array.indexOf("+"),my_array.indexOf("-")];
-		console.log(indexes);
 		indexes = indexes.filter((e) => {
 			return e > 0;
 		})
@@ -161,7 +185,6 @@ function evaluate(my_array) {
 		let end_section = my_array.slice(i+2);
 		my_array = start_section.concat(operate(my_array[i-1], my_array[i+1], my_array[i])).concat(end_section);
 	}
-
 
 	return my_array;
 }
