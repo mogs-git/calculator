@@ -29,6 +29,10 @@
 	border-radius: 5px;
 }
 
+/*.display_history {
+	display: grid;
+}*/
+
 #number_button_section {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);

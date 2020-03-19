@@ -66,47 +66,100 @@ calc_body.appendChild(evaluate_button);
 //---------------------------------------------------------------------------------
 
 const all_buttons = document.getElementsByClassName("button") 
+let result;
+let my_target;
+let current_num = "";
+let sum_array = [];
+let display_array = [];
+
+
+
+function resolve_inputs(my_target) {
+	let operator_inputs = operators.concat(spec_operators).concat(["="])
+	let all_inputs = numbers.map(String).concat(operator_inputs);  
+
+	if (isIn([my_target], all_inputs)) {
+		if (isIn([my_target], operator_inputs)) {
+			if (my_target === "del") {
+				sum_array.pop();
+			} else if (my_target === "clr") {
+				sum_array = [];
+			} else if (my_target != "=") {
+				sum_array.push(my_target);
+			} else {
+				result = evaluate(sum_array)[0];
+				sum_array = [result];
+				display_eval.textContent = result;
+			}
+		} else {
+			sum_array.push(my_target)
+		}
+
+		display_text = "";
+		for (let i = 0; i < sum_array.length; i++) {
+			if (i === 0) {
+				display_text += sum_array[i];
+			} else if (isIn([sum_array[i]], operator_inputs)) {
+				display_text += " " + sum_array[i] + " ";
+				current_num = "";
+			} else {
+				display_text = display_text + sum_array[i];
+			}
+		}
+
+		// sum_array.forEach((symbol, index) => {
+		// 	if (index === 0) {
+		// 		display_text = symbol;
+		// 	} else {
+		// 		display_text = display_text + " " + symbol;
+		// 	}
+		// })
+		display_sum.textContent = display_text;
+	}
+}
 
 for (let i = 0; i < all_buttons.length; i++) {
 	all_buttons[i].addEventListener("click", (e) => {
 		
+	my_target = e.target.textContent;
 		// Add content to sum array for the evaluate function
-		if (isIn([e.target.textContent], operators.concat(spec_operators).concat(["="]))) {
-			if (e.target.textContent === "del") {
-				sum_array.pop();
-			} else if (e.target.textContent === "clr") {
-				sum_array = [];
-			} else if (e.target.textContent != "=") {
-				sum_array.push(e.target.textContent);
-			} else {
-				display_eval.textContent = evaluate(sum_array)[0];
-			}
-		} else {
-			sum_array.push(Number(e.target.textContent));
-		}
 
-		let display_text = "";
-		// Add content to display
-		if (e.target.textContent === "del") {
-			display_array.pop();
-		} else if (e.target.textContent === "clr") {
-			display_array = [];
-		} else if (e.target.textContent === "=") {
-			//
-		} else {
-			display_array.push(e.target.textContent);
-		}
-		display_array.forEach((symbol) => {
-			display_text = display_text + " " + symbol;
-		})
-		display_sum.textContent = display_text;
+	resolve_inputs(my_target);
+	// 	if (isIn([my_target], operators.concat(spec_operators).concat(["="]))) {
+	// 		if (my_target === "del") {
+	// 			sum_array.pop();
+	// 		} else if (my_target === "clr") {
+	// 			sum_array = [];
+	// 		} else if (my_target != "=") {
+	// 			sum_array.push(my_target);
+	// 		} else {
+	// 			result = evaluate(sum_array)[0];
+	// 			sum_array = [result];
+	// 			display_sum.textContent = result;
+	// 			display_eval.textContent = result;
+	// 		}
+	// 	} else {
+	// 		sum_array.push(Number(my_target));
+	// 	}
+
+	// 	let display_text = "";
+	// 	// Add content to display
+	// 	if (my_target === "del") {
+	// 		display_array.pop();
+	// 	} else if (my_target === "clr") {
+	// 		display_array = [];
+	// 	} else if (my_target === "=") {
+	// 		display_array = [result];
+	// 	} else {
+	// 		display_array.push(my_target);
+	// 	}
+	// 	display_array.forEach((symbol) => {
+	// 		display_text = display_text + " " + symbol;
+	// 	})
+	// 	display_sum.textContent = display_text;
+	// })
 	})
 }
-
-let display_array = [];
-
-
-let sum_array = [];
 
 function operate(num1, num2, op) {
 	if (op === "+") {
@@ -160,6 +213,28 @@ test_array = [1, "+", 2, "+", "(", 1, "-", 2, "+", "(", 2, "/", 2, "*", "(", 1, 
 test = 2/2*-1-1
 
 function evaluate(my_array) {
+
+	function conv_string_to_num(my_array) {
+		let output_array = [];
+		let num_buffer = "";
+		for (let i = 0; i < my_array.length; i++) {
+			if (i === (my_array.length-1)) {
+				num_buffer = num_buffer + my_array[i];
+				output_array.push(Number(num_buffer));
+				num_buffer = "";
+			} else if (isIn([my_array[i]], numbers.map(String))) {
+				num_buffer = num_buffer + my_array[i];
+			} else {
+				output_array.push(Number(num_buffer));
+				num_buffer = "";
+				output_array.push(my_array[i]);
+			}
+		}
+		return output_array;
+	}
+	console.log(my_array)
+	my_array = conv_string_to_num(my_array);
+	console.log(my_array);
 	if (my_array.indexOf(")") != -1) {
 		my_array = collapse_brackets(my_array);
 	}
@@ -188,6 +263,25 @@ function evaluate(my_array) {
 
 	return my_array;
 }
+
+// Keyboard presses
+//-------------------------------------------------------------------------------------
+document.addEventListener('keydown', register_key);
+
+function register_key(e) {
+	my_target = e.key;
+
+	if (my_target === "Backspace") {
+		my_target = "del";
+	} else if (my_target === "c") {
+		my_target = "clr";
+	}
+
+	resolve_inputs(my_target);
+
+}
+
+
 
 
 
