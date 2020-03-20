@@ -54,12 +54,20 @@ for (let i = 0; i < spec_operators.length; i++) {
 }
 
 
+// create ANS button
+let ans_button = document.createElement("div");
+ans_button.classList.add("ans_button", "operator_button", "button");
+ans_button.textContent = "Ans"
+const calc_body = document.getElementById("calculator_body"); // Move somewhere else?
+calc_body.appendChild(ans_button);
+
+
 // Create evaluate button
 let evaluate_button = document.createElement("div");
 evaluate_button.classList.add("evaluate_button","operator_button","button");
 evaluate_button.textContent = "=";
-const calc_body = document.getElementById("calculator_body");
 calc_body.appendChild(evaluate_button);
+
 
 
 // Doing operations 
@@ -88,7 +96,7 @@ function resolve_inputs(my_target) {
 				sum_array.push(my_target);
 			} else {
 				result = evaluate(sum_array)[0];
-				sum_array = [result];
+				sum_array = [];
 				display_eval.textContent = result;
 			}
 		} else {
