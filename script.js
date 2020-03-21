@@ -225,22 +225,39 @@ function evaluate(my_array) {
 	function conv_string_to_num(my_array) {
 		let output_array = [];
 		let num_buffer = "";
-		for (let i = 0; i < my_array.length; i++) {
-			if (i === (my_array.length-1)) {
-				num_buffer = num_buffer + my_array[i];
-				output_array.push(Number(num_buffer));
-				num_buffer = "";
-			} else if (isIn([my_array[i]], numbers.map(String))) {
-				num_buffer = num_buffer + my_array[i];
+
+		function my_helper(element) {
+			if (element.length>1) {
+				return element.split("");
 			} else {
-				output_array.push(Number(num_buffer));
+				return element;
+			}
+		}
+		my_array = my_array.map(String).map(my_helper).flat();
+		for (let i = 0; i < my_array.length; i++) {
+			if (isIn([my_array[i]], numbers.map(String))) {
+				num_buffer = num_buffer + my_array[i];
+				if (i === my_array.length-1) {
+					output_array.push(Number(num_buffer));
+				}
+			} else if (i === (my_array.length-1)) {
+				if (num_buffer != "") {
+					output_array.push(Number(num_buffer));
+				};
+				output_array.push(my_array[i]);
+			} else {
+				console.log(num_buffer);
+				if (num_buffer != "") {
+					output_array.push(Number(num_buffer));
+				}
 				num_buffer = "";
 				output_array.push(my_array[i]);
 			}
+			//console.log(output_array);
 		}
 		return output_array;
 	}
-	console.log(my_array)
+	console.log("Before: " + my_array);
 	my_array = conv_string_to_num(my_array);
 	console.log(my_array);
 	if (my_array.indexOf(")") != -1) {
@@ -301,5 +318,7 @@ To Do:
 	- Make "evaluate" logic by using indexof operators in sum_array then passing these and numbers either side of index to operate(),
 	then slicing the array with the returned value. 
 	- Add calculator-y styles e.g. change the font style.
+
+	- Pull old repo where evaluate "worked" before adding keypresses.
 
 */
