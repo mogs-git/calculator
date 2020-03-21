@@ -127,45 +127,30 @@ function resolve_inputs(my_target) {
 }
 
 for (let i = 0; i < all_buttons.length; i++) {
-	all_buttons[i].addEventListener("click", (e) => {
+	all_buttons[i].addEventListener("mousedown", (e) => {
+
+	e.target.style.color = "red";
+	e.target.style.border = "2px solid red";
 		
 	my_target = e.target.textContent;
 		// Add content to sum array for the evaluate function
 
 	resolve_inputs(my_target);
-	// 	if (isIn([my_target], operators.concat(spec_operators).concat(["="]))) {
-	// 		if (my_target === "del") {
-	// 			sum_array.pop();
-	// 		} else if (my_target === "clr") {
-	// 			sum_array = [];
-	// 		} else if (my_target != "=") {
-	// 			sum_array.push(my_target);
-	// 		} else {
-	// 			result = evaluate(sum_array)[0];
-	// 			sum_array = [result];
-	// 			display_sum.textContent = result;
-	// 			display_eval.textContent = result;
-	// 		}
-	// 	} else {
-	// 		sum_array.push(Number(my_target));
-	// 	}
+	})
 
-	// 	let display_text = "";
-	// 	// Add content to display
-	// 	if (my_target === "del") {
-	// 		display_array.pop();
-	// 	} else if (my_target === "clr") {
-	// 		display_array = [];
-	// 	} else if (my_target === "=") {
-	// 		display_array = [result];
-	// 	} else {
-	// 		display_array.push(my_target);
-	// 	}
-	// 	display_array.forEach((symbol) => {
-	// 		display_text = display_text + " " + symbol;
-	// 	})
-	// 	display_sum.textContent = display_text;
-	// })
+	all_buttons[i].addEventListener("mouseover", (e) => {
+		e.target.style.color = "white";
+		e.target.style.border = "2px solid white";
+	})
+
+	all_buttons[i].addEventListener("mouseout", (e) => {
+		e.target.style.color = "black";
+		e.target.style.border = "2px solid black";
+	})
+
+	all_buttons[i].addEventListener("mouseup", (e) => {
+		e.target.style.color = "black";
+		e.target.style.border = "2px solid black";
 	})
 }
 
@@ -303,8 +288,8 @@ function register_key(e) {
 	}
 
 	resolve_inputs(my_target);
-
 }
+
 
 
 
@@ -312,13 +297,7 @@ function register_key(e) {
 
 /* 
 To Do:
-	
-	- Add clear and delete button
-	- Add style changes on click/hover/mousedown for buttons
-	- Make "evaluate" logic by using indexof operators in sum_array then passing these and numbers either side of index to operate(),
-	then slicing the array with the returned value. 
-	- Add calculator-y styles e.g. change the font style.
 
-	- Pull old repo where evaluate "worked" before adding keypresses.
+- implement "ans" button
 
 */
