@@ -61,6 +61,11 @@ ans_button.textContent = "Ans"
 const calc_body = document.getElementById("calculator_body"); // Move somewhere else?
 calc_body.appendChild(ans_button);
 
+// create decimal button
+let dec_button = document.createElement("div");
+dec_button.classList.add("decimal_button", "operator_button", "button");
+dec_button.textContent = "."
+calc_body.appendChild(dec_button);
 
 // Create evaluate button
 let evaluate_button = document.createElement("div");
@@ -79,11 +84,13 @@ let my_target;
 let current_num = "";
 let sum_array = [];
 let display_array = [];
+let prev_ans = "";
+console.log(prev_ans);
 
 
 
 function resolve_inputs(my_target) {
-	let operator_inputs = operators.concat(spec_operators).concat(["="])
+	let operator_inputs = operators.concat(spec_operators).concat(["=", ".", "Ans"])
 	let all_inputs = numbers.map(String).concat(operator_inputs);  
 
 	if (isIn([my_target], all_inputs)) {
@@ -92,10 +99,17 @@ function resolve_inputs(my_target) {
 				sum_array.pop();
 			} else if (my_target === "clr") {
 				sum_array = [];
+			} else if (my_target === "Ans") {
+				if (prev_ans != "") {
+					prev_ans.map((el) => {
+						sum_array.push(el);
+					});
+				}
 			} else if (my_target != "=") {
 				sum_array.push(my_target);
 			} else {
 				result = evaluate(sum_array)[0];
+				prev_ans = String(result).split("");
 				sum_array = [];
 				display_eval.textContent = result;
 			}
@@ -115,13 +129,6 @@ function resolve_inputs(my_target) {
 			}
 		}
 
-		// sum_array.forEach((symbol, index) => {
-		// 	if (index === 0) {
-		// 		display_text = symbol;
-		// 	} else {
-		// 		display_text = display_text + " " + symbol;
-		// 	}
-		// })
 		display_sum.textContent = display_text;
 	}
 }
@@ -220,7 +227,7 @@ function evaluate(my_array) {
 		}
 		my_array = my_array.map(String).map(my_helper).flat();
 		for (let i = 0; i < my_array.length; i++) {
-			if (isIn([my_array[i]], numbers.map(String))) {
+			if (isIn([my_array[i]], numbers.map(String).concat("."))) {
 				num_buffer = num_buffer + my_array[i];
 				if (i === my_array.length-1) {
 					output_array.push(Number(num_buffer));
@@ -285,6 +292,8 @@ function register_key(e) {
 		my_target = "del";
 	} else if (my_target === "c") {
 		my_target = "clr";
+	} else if (my_target === "a") {
+		my_target = "Ans";
 	}
 
 	resolve_inputs(my_target);
@@ -298,6 +307,7 @@ function register_key(e) {
 /* 
 To Do:
 
-- implement "ans" button
-
+- Implement error checking!
+	- Dividing by zero
+	- incorrect sequencing of operators and operands
 */

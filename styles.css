@@ -71,10 +71,28 @@
 .evaluate_button {
 	position: absolute;
 	height: 60px;
-	width: 30px;
+	width: 35px;
 	bottom: 0px;
 	right: 0px;
 	margin: 10px;
+}
+
+.ans_button {
+	position: absolute;
+	height: 60px;
+	width: 35px;
+	bottom: 0px;
+	left: 0px;
+	margin: 10px;	
+}
+
+.decimal_button {
+	position: absolute;
+	height: 60px;
+	width: 35px;
+	bottom: 0px;
+	left: 60px;
+	margin: 10px;	
 }
 
 #spec_operator_button_section {
