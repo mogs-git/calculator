@@ -106,15 +106,26 @@ function resolve_inputs(my_target) {
 					});
 				}
 			} else if (my_target != "=") {
-				sum_array.push(my_target);
+				// ERROR CHECKING: check last entry not also operator
+				if (operators.includes(sum_array[sum_array.length-1]) && my_target != "(") {
+					display_eval.textContent = "ERROR: BAD OPERATOR SEQUENCE";
+				} else if (sum_array.length === 0) {
+					display_eval.textContent = "ERROR: BAD OPERATOR SEQUENCE";
+				} else {
+					sum_array.push(my_target);
+				}
 			} else {
-				result = evaluate(sum_array)[0];
-				prev_ans = String(result).split("");
-				sum_array = [];
-				display_eval.textContent = result;
+				if (test_div_by_zero(sum_array) === 1) {
+					display_eval.textContent = "ERROR: DIVIDE BY ZERO"
+				} else {
+					result = evaluate(sum_array)[0];
+					prev_ans = String(result).split("");
+					sum_array = [];
+					display_eval.textContent = result;
+				}
 			}
 		} else {
-			sum_array.push(my_target)
+			sum_array.push(my_target);
 		}
 
 		display_text = "";
@@ -184,6 +195,9 @@ function getAllIndexes(arr, val) {
 }
 
 function isIn (arr, haystack) {
+	if (!Array.isArray(arr)) {
+		console.log("INPUT PASSED TO ISIN() IS NOT AN ARRAY!")
+	}
     return arr.some(function (v) {
         return haystack.indexOf(v) >= 0;
     });
@@ -281,6 +295,20 @@ function evaluate(my_array) {
 	return my_array;
 }
 
+function test_div_by_zero(array) {
+	for (let i = 0; i < array.length; i++) {
+		if (array[i] == "/" && array[i+1] == "0") {
+			if (array[i+2] == "." && isIn([array[i+3]], numbers.map(String))) {
+				return 0;
+			} else {
+				return 1;
+			} 
+		}
+	}
+
+	return 0;
+}
+
 // Keyboard presses
 //-------------------------------------------------------------------------------------
 document.addEventListener('keydown', register_key);
@@ -310,4 +338,5 @@ To Do:
 - Implement error checking!
 	- Dividing by zero
 	- incorrect sequencing of operators and operands
+	- Add a check to collapse brackets, filter for brackets, make sure they collapse in bracket-only sequence i.e. ["(",")","(","(",")",")"]
 */
