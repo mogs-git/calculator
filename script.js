@@ -116,7 +116,9 @@ function resolve_inputs(my_target) {
 				}
 			} else {
 				if (test_div_by_zero(sum_array) === 1) {
-					display_eval.textContent = "ERROR: DIVIDE BY ZERO"
+					display_eval.textContent = "ERROR: DIVIDE BY ZERO";
+				} else if (check_brackets(sum_array) === 1) {
+					display_eval.textContent = "ERROR: BAD BRACKET SEQUENCE";
 				} else {
 					result = evaluate(sum_array)[0];
 					prev_ans = String(result).split("");
@@ -303,6 +305,42 @@ function test_div_by_zero(array) {
 			} else {
 				return 1;
 			} 
+		}
+	}
+
+	return 0;
+}
+
+function check_brackets(array) {
+	num_open = array.filter((val) => {
+		return val === "(";
+	}).length;
+
+	num_closed = array.filter((val) => {
+		return val === ")";
+	}).length;
+
+	if (num_open != num_closed) {
+		return 1;
+	}
+
+	open_indexes = getAllIndexes(array, "(");
+	closed_indexes = getAllIndexes(array, ")");
+
+	open_indexes.sort(function(a, b) {
+	  return a - b;
+	});
+
+	closed_indexes.sort(function(a, b) {
+	  return a - b;
+	});
+
+	while (closed_indexes.length > 0) {
+		if (closed_indexes[closed_indexes.length-1] < open_indexes[open_indexes.length-1]) {
+			return 1;
+		} else {
+			closed_indexes.pop();
+			open_indexes.pop();
 		}
 	}
 
